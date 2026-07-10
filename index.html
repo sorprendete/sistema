@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Gerencial SmartCampus EESPP-T</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+
+    <!-- Power BI Service Header -->
+    <header class="app-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <rect x="14" y="3" width="6" height="18" rx="1"/>
+            <rect x="8" y="9" width="5" height="12" rx="1"/>
+            <rect x="2" y="14" width="5" height="7" rx="1"/>
+        </svg>
+        <h1>SmartCampus EESPP-T</h1>
+    </header>
+
+    <div class="layout-wrapper">
+        <aside class="sidebar">
+            <nav class="nav-pages">
+                <div class="nav-item active" data-page="page1">Resumen Ejecutivo</div>
+                <div class="nav-item" data-page="page2">Proyectos TI</div>
+                <div class="nav-item" data-page="page3">Servicios y EVA</div>
+                <div class="nav-item" data-page="page4">Seguridad y Soporte</div>
+            </nav>
+
+            <div class="filters">
+                <h3>Filtros Globales</h3>
+                <div class="filter-group">
+                    <label>Trimestre</label>
+                    <select id="filter-trimestre">
+                        <option value="all">Todos los trimestres</option>
+                        <option value="Q1 2026">Q1 2026</option>
+                        <option value="Q2 2026">Q2 2026</option>
+                        <option value="Q3 2026">Q3 2026</option>
+                        <option value="Q4 2026">Q4 2026</option>
+                        <option value="Q1 2027">Q1 2027</option>
+                        <option value="Q2 2027">Q2 2027</option>
+                        <option value="Q3 2027">Q3 2027</option>
+                        <option value="Q4 2027">Q4 2027</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Estado del Proyecto</label>
+                    <select id="filter-estado">
+                        <option value="all">Todos los estados</option>
+                        <option value="Cumplido">Cumplido</option>
+                        <option value="En proceso">En proceso</option>
+                        <option value="Riesgo medio">Riesgo medio</option>
+                        <option value="Crítico">Crítico</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Responsable</label>
+                    <select id="filter-responsable">
+                        <option value="all">Todos los responsables</option>
+                        <option value="Dirección General">Dirección General</option>
+                        <option value="Jefatura OTI">Jefatura OTI</option>
+                        <option value="Área de Calidad">Área de Calidad</option>
+                        <option value="Unidad Académica">Unidad Académica</option>
+                        <option value="Administración">Administración</option>
+                    </select>
+                </div>
+                <button id="reset-filters" class="reset-btn">Restablecer filtros</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h2 id="page-title">Resumen Ejecutivo</h2>
+                <div id="active-filters-display" class="active-filters-display"></div>
+            </header>
+
+            <!-- PAGE 1: Resumen Ejecutivo -->
+            <div id="page1" class="page-container active">
+                <section class="kpis">
+                    <div class="kpi-card"><div class="kpi-header">Avance Global PETI</div><div class="kpi-value" id="p1-kpi-peti">--%</div></div>
+                    <div class="kpi-card"><div class="kpi-header">Incidentes TI Promedio</div><div class="kpi-value" id="p1-kpi-inc">--</div></div>
+                    <div class="kpi-card"><div class="kpi-header">Proyectos Críticos</div><div class="kpi-value" id="p1-kpi-crit">--</div></div>
+                </section>
+                <section class="charts-grid">
+                    <div class="chart-card"><h3>Cumplimiento CBC-TI</h3><div id="p1-gauge-cbc" class="chart-container" style="min-height:200px;"></div></div>
+                    <div class="chart-card"><h3>Estado General Proyectos</h3><div id="p1-bar-estado" class="chart-container" style="min-height:200px;"></div></div>
+                    <div class="chart-card"><h3>Riesgo Estudiantil (Tendencia Alertas)</h3><div id="p1-trend-riesgo" class="chart-container"></div></div>
+                    <div class="chart-card"><h3>Responsables de Proyectos</h3><div id="p1-pie-resp" class="chart-container"></div></div>
+                </section>
+            </div>
+
+            <!-- PAGE 2: Proyectos TI -->
+            <div id="page2" class="page-container">
+                <section class="charts-grid">
+                    <div class="chart-card"><h3>Actividades por OETI (Avance)</h3><div id="p2-bar-oeti" class="chart-container"></div></div>
+                    <div class="chart-card"><h3>Avance por Trimestre</h3><div id="p2-line-avance" class="chart-container"></div></div>
+                    <div class="chart-card full-width"><h3>Cronograma de Proyectos (Gantt)</h3><div id="p2-gantt" class="chart-container" style="min-height: 200px;"></div></div>
+                    <div class="chart-card">
+                        <h3>Estado por Proyecto</h3>
+                        <div class="table-container">
+                            <table class="custom-table">
+                                <thead><tr><th>Proyecto</th><th>Estado</th><th>Avance</th></tr></thead>
+                                <tbody id="p2-table-proyectos"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Responsable (Resumen)</h3>
+                        <div class="table-container">
+                            <table class="custom-table">
+                                <thead><tr><th>Responsable</th><th>Proyectos</th><th>Avance Prom.</th></tr></thead>
+                                <tbody id="p2-pivot-resp"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PAGE 3: Servicios y EVA -->
+            <div id="page3" class="page-container">
+                <section class="kpis">
+                    <div class="kpi-card"><div class="kpi-header">Cursos Activos</div><div class="kpi-value" id="p3-kpi-cursos">--</div></div>
+                </section>
+                <section class="charts-grid">
+                    <div class="chart-card"><h3>Uso de Biblioteca Virtual</h3><div id="p3-gauge-biblio" class="chart-container" style="min-height:220px;"></div></div>
+                    <div class="chart-card"><h3>Trámites Digitalizados</h3><div id="p3-bar-tramites" class="chart-container" style="min-height:220px;"></div></div>
+                    <div class="chart-card full-width"><h3>Usuarios Activos EVA en el Tiempo</h3><div id="p3-line-eva" class="chart-container" style="min-height:220px;"></div></div>
+                    <div class="chart-card full-width">
+                        <h3>Alertas de Riesgo Estudiantil</h3>
+                        <div class="table-container">
+                            <table class="custom-table">
+                                <thead><tr><th>Estudiante</th><th>Programa</th><th>Días Inactivo</th><th>Riesgo</th></tr></thead>
+                                <tbody id="p3-table-alertas"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PAGE 4: Seguridad y Soporte -->
+            <div id="page4" class="page-container">
+                <section class="kpis">
+                    <div class="kpi-card"><div class="kpi-header">Tiempo Prom. Respuesta</div><div class="kpi-value" id="p4-kpi-tiempo">-- hrs</div></div>
+                    <div class="kpi-card"><div class="kpi-header">Total Backups Realizados</div><div class="kpi-value" id="p4-kpi-backups">--</div></div>
+                </section>
+                <section class="charts-grid">
+                    <div class="chart-card"><h3>Disponibilidad de Servicios</h3><div id="p4-gauge-disp" class="chart-container" style="min-height:220px;"></div></div>
+                    <div class="chart-card"><h3>Incidentes de Seguridad</h3><div id="p4-line-inc" class="chart-container" style="min-height:220px;"></div></div>
+                    <div class="chart-card full-width"><h3>Tickets Atendidos por Trimestre</h3><div id="p4-bar-tickets" class="chart-container" style="min-height:220px;"></div></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
